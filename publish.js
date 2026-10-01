@@ -36,9 +36,12 @@ const zip = new AdmZip();
 // Pack manifest
 zip.addLocalFile(manifestPath);
 
-// Pack icons and src
+// Pack icons, src, and popup (if present)
 zip.addLocalFolder(path.join(targetDir, 'icons'), 'icons');
 zip.addLocalFolder(path.join(targetDir, 'src'), 'src');
+if (fs.existsSync(path.join(targetDir, 'popup'))) {
+    zip.addLocalFolder(path.join(targetDir, 'popup'), 'popup');
+}
 
 const zipName = `tag-to-json-extension-${targetVersionFolder}.zip`;
 const zipPath = path.join(targetDir, zipName);
