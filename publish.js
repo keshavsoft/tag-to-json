@@ -1,0 +1,51 @@
+import fs from 'node:fs';
+import path from 'node:path';
+import { fileURLToPath } from 'node:url';
+import AdmZip from 'adm-zip';
+
+const __dirname = path.dirname(fileURLToPath(import.meta.url));
+const extensionsRoot = path.join(__dirname, 'extension');
+
+// 1. Detect latest version folder in extension/ (e.g. v1, v2)
+const versionFolders = fs.readdirSync(extensionsRoot, { withFileTypes: true })
+    .filter(entry => entry.isDirectory() && /^v\d+$/.test(entry.name))
+    .map(entry => ({ name: entry.name, n: Number(entry.name.slice(1)) }))
+    .sort((a, b) => b.n - a.n);
+
+if (versionFolders.length === 0) {
+    console.error('Error: No version directories (v1, v2...) found in extension/.');
+    process.exit(1);
+}
+
+const targetVersionFolder = versionFolders[0].name;
+const targetDir = path.join(extensionsRoot, targetVersionFolder);
+const manifestPath = path.join(targetDir, 'manifest.json');
+
+if (!fs.existsSync(manifestPath)) {
+    console.error(`Error: manifest.json not found in extension/${targetVersionFolder}.`);
+    process.exit(1);
+}
+
+const manifest = JSON.parse(fs.readFileSync(manifestPath, 'utf8'));
+const version = manifest.version;
+
+console.log(`📦 Packaging latest extension (${targetVersionFolder} - v${version})...`);
+
+const zip = new AdmZip();
+
+// Pack manifest
+zip.addLocalFile(manifestPath);
+
+// Pack icons and src
+zip.addLocalFolder(path.join(targetDir, 'icons'), 'icons');
+zip.addLocalFolder(path.join(targetDir, 'src'), 'src');
+
+const zipName = `tag-to-json-extension-${targetVersionFolder}.zip`;
+const zipPath = path.join(targetDir, zipName);
+
+if (fs.existsSync(zipPath)) {
+    fs.unlinkSync(zipPath);
+}
+
+zip.writeZip(zipPath);
+console.log(`🎉 Success! Created package inside extension/${targetVersionFolder}/${zipName}`);

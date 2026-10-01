@@ -1,0 +1,492 @@
+{
+    "tagName": "body",
+    "attributes": {
+        "id": "body"
+    },
+    "children": [
+        {
+            "tagName": "header",
+            "attributes": {
+                "class": "app-header"
+            },
+            "children": [
+                {
+                    "tagName": "div",
+                    "attributes": {
+                        "class": "header-inner"
+                    },
+                    "children": [
+                        {
+                            "tagName": "div",
+                            "attributes": {
+                                "class": "brand-section"
+                            },
+                            "children": [
+                                {
+                                    "tagName": "div",
+                                    "attributes": {
+                                        "class": "brand-logo"
+                                    },
+                                    "children": [
+                                        {
+                                            "tagName": "i",
+                                            "attributes": {
+                                                "class": "bi bi-boxes"
+                                            }
+                                        }
+                                    ]
+                                },
+                                {
+                                    "tagName": "div",
+                                    "attributes": {
+                                        "class": "brand-info"
+                                    },
+                                    "children": [
+                                        {
+                                            "tagName": "h1",
+                                            "children": [
+                                                {
+                                                    "tagName": "span",
+                                                    "attributes": {
+                                                        "class": "badge-tag"
+                                                    },
+                                                    "textContent": "withBatches"
+                                                }
+                                            ]
+                                        },
+                                        {
+                                            "tagName": "div",
+                                            "attributes": {
+                                                "class": "breadcrumb-nav"
+                                            },
+                                            "children": [
+                                                {
+                                                    "tagName": "a",
+                                                    "attributes": {
+                                                        "href": "/"
+                                                    },
+                                                    "textContent": "Home"
+                                                },
+                                                {
+                                                    "tagName": "a",
+                                                    "attributes": {
+                                                        "href": "/docs/"
+                                                    },
+                                                    "textContent": "Docs"
+                                                },
+                                                {
+                                                    "tagName": "span",
+                                                    "textContent": "masters"
+                                                },
+                                                {
+                                                    "tagName": "span",
+                                                    "textContent": "StockItem"
+                                                },
+                                                {
+                                                    "tagName": "strong",
+                                                    "textContent": "withBatches"
+                                                }
+                                            ]
+                                        }
+                                    ]
+                                }
+                            ]
+                        },
+                        {
+                            "tagName": "div",
+                            "attributes": {
+                                "class": "header-actions"
+                            },
+                            "children": [
+                                {
+                                    "tagName": "div",
+                                    "attributes": {
+                                        "class": "status-indicator",
+                                        "id": "connectionStatus"
+                                    },
+                                    "children": [
+                                        {
+                                            "tagName": "span",
+                                            "attributes": {
+                                                "class": "status-dot"
+                                            }
+                                        },
+                                        {
+                                            "tagName": "span",
+                                            "attributes": {
+                                                "id": "statusText"
+                                            }
+                                        }
+                                    ]
+                                },
+                                {
+                                    "tagName": "a",
+                                    "attributes": {
+                                        "href": "/docs/",
+                                        "class": "btn-docs-link"
+                                    },
+                                    "children": [
+                                        {
+                                            "tagName": "i",
+                                            "attributes": {
+                                                "class": "bi bi-journal-text"
+                                            }
+                                        }
+                                    ]
+                                }
+                            ]
+                        }
+                    ]
+                }
+            ]
+        },
+        {
+            "tagName": "main",
+            "attributes": {
+                "class": "main-wrapper"
+            },
+            "children": [
+                {
+                    "tagName": "section",
+                    "attributes": {
+                        "class": "control-card"
+                    },
+                    "children": [
+                        {
+                            "tagName": "div",
+                            "attributes": {
+                                "class": "control-inputs"
+                            },
+                            "children": [
+                                {
+                                    "tagName": "div",
+                                    "attributes": {
+                                        "class": "input-group-custom"
+                                    },
+                                    "children": [
+                                        {
+                                            "tagName": "span",
+                                            "attributes": {
+                                                "class": "input-label"
+                                            },
+                                            "children": [
+                                                {
+                                                    "tagName": "i",
+                                                    "attributes": {
+                                                        "class": "bi bi-building me-1"
+                                                    }
+                                                }
+                                            ]
+                                        },
+                                        {
+                                            "tagName": "div",
+                                            "attributes": {
+                                                "id": "companySelect"
+                                            }
+                                        }
+                                    ]
+                                },
+                                {
+                                    "tagName": "button",
+                                    "attributes": {
+                                        "type": "button",
+                                        "class": "btn-fetch",
+                                        "id": "btnFetch"
+                                    },
+                                    "children": [
+                                        {
+                                            "tagName": "i",
+                                            "attributes": {
+                                                "class": "bi bi-arrow-repeat"
+                                            }
+                                        },
+                                        {
+                                            "tagName": "span",
+                                            "textContent": "Fetch Batches"
+                                        }
+                                    ]
+                                },
+                                {
+                                    "tagName": "label",
+                                    "attributes": {
+                                        "style": "display:flex; align-items:center; gap:0.5rem; font-size:0.85rem; color:var(--text-muted); cursor:pointer;"
+                                    },
+                                    "children": [
+                                        {
+                                            "tagName": "input",
+                                            "attributes": {
+                                                "type": "checkbox",
+                                                "id": "chkHasBatchesOnly"
+                                            }
+                                        },
+                                        {
+                                            "tagName": "span",
+                                            "attributes": {
+                                                "id": "lblHasBatches"
+                                            }
+                                        }
+                                    ]
+                                }
+                            ]
+                        },
+                        {
+                            "tagName": "div",
+                            "attributes": {
+                                "class": "search-box"
+                            },
+                            "children": [
+                                {
+                                    "tagName": "i",
+                                    "attributes": {
+                                        "class": "bi bi-search"
+                                    }
+                                },
+                                {
+                                    "tagName": "input",
+                                    "attributes": {
+                                        "type": "text",
+                                        "id": "searchInput",
+                                        "placeholder": "Search item, batch, or godown..."
+                                    }
+                                }
+                            ]
+                        }
+                    ]
+                },
+                {
+                    "tagName": "section",
+                    "attributes": {
+                        "class": "stats-grid",
+                        "id": "statsGrid"
+                    }
+                },
+                {
+                    "tagName": "nav",
+                    "attributes": {
+                        "class": "view-tabs"
+                    },
+                    "children": [
+                        {
+                            "tagName": "button",
+                            "attributes": {
+                                "class": "tab-btn active",
+                                "data-tab": "tableView",
+                                "id": "tabTable"
+                            },
+                            "children": [
+                                {
+                                    "tagName": "i",
+                                    "attributes": {
+                                        "class": "bi bi-table"
+                                    }
+                                }
+                            ]
+                        },
+                        {
+                            "tagName": "button",
+                            "attributes": {
+                                "class": "tab-btn",
+                                "data-tab": "jsonView",
+                                "id": "tabJson"
+                            },
+                            "children": [
+                                {
+                                    "tagName": "i",
+                                    "attributes": {
+                                        "class": "bi bi-code-slash"
+                                    }
+                                }
+                            ]
+                        },
+                        {
+                            "tagName": "button",
+                            "attributes": {
+                                "class": "tab-btn",
+                                "data-tab": "rootItemsView",
+                                "id": "tabRootItems"
+                            },
+                            "children": [
+                                {
+                                    "tagName": "i",
+                                    "attributes": {
+                                        "class": "bi bi-list-ul"
+                                    }
+                                }
+                            ]
+                        }
+                    ]
+                },
+                {
+                    "tagName": "section",
+                    "attributes": {
+                        "id": "tableView",
+                        "class": "data-card"
+                    },
+                    "children": [
+                        {
+                            "tagName": "div",
+                            "attributes": {
+                                "class": "table-responsive"
+                            },
+                            "children": [
+                                {
+                                    "tagName": "table",
+                                    "attributes": {
+                                        "class": "custom-table",
+                                        "id": "stockItemsTable"
+                                    },
+                                    "children": [
+                                        {
+                                            "tagName": "thead",
+                                            "children": [
+                                                {
+                                                    "tagName": "tr",
+                                                    "attributes": {
+                                                        "id": "tableHeaderRow"
+                                                    },
+                                                    "children": [
+                                                        {
+                                                            "tagName": "th",
+                                                            "textContent": "Name"
+                                                        }
+                                                    ]
+                                                }
+                                            ]
+                                        },
+                                        {
+                                            "tagName": "tbody",
+                                            "attributes": {
+                                                "id": "tableBody"
+                                            }
+                                        }
+                                    ]
+                                }
+                            ]
+                        }
+                    ]
+                },
+                {
+                    "tagName": "section",
+                    "attributes": {
+                        "id": "jsonView",
+                        "class": "data-card",
+                        "style": "display: none; padding: 1rem;"
+                    },
+                    "children": [
+                        {
+                            "tagName": "div",
+                            "attributes": {
+                                "style": "display:flex; justify-content:space-between; align-items:center; margin-bottom: 0.75rem;"
+                            },
+                            "children": [
+                                {
+                                    "tagName": "span",
+                                    "attributes": {
+                                        "id": "jsonSourceLabel",
+                                        "style": "font-size:0.85rem; color:var(--text-muted);"
+                                    }
+                                },
+                                {
+                                    "tagName": "button",
+                                    "attributes": {
+                                        "id": "btnCopyJson",
+                                        "class": "btn-docs-link",
+                                        "style": "cursor:pointer;"
+                                    },
+                                    "children": [
+                                        {
+                                            "tagName": "i",
+                                            "attributes": {
+                                                "class": "bi bi-clipboard"
+                                            }
+                                        }
+                                    ]
+                                }
+                            ]
+                        },
+                        {
+                            "tagName": "pre",
+                            "attributes": {
+                                "class": "json-viewer-container",
+                                "id": "jsonViewerContent"
+                            }
+                        }
+                    ]
+                },
+                {
+                    "tagName": "section",
+                    "attributes": {
+                        "id": "rootItemsView",
+                        "class": "data-card",
+                        "style": "display: none;"
+                    },
+                    "children": [
+                        {
+                            "tagName": "div",
+                            "attributes": {
+                                "class": "table-responsive"
+                            },
+                            "children": [
+                                {
+                                    "tagName": "table",
+                                    "attributes": {
+                                        "class": "custom-table",
+                                        "id": "rootItemsTable"
+                                    },
+                                    "children": [
+                                        {
+                                            "tagName": "thead",
+                                            "children": [
+                                                {
+                                                    "tagName": "tr",
+                                                    "attributes": {
+                                                        "id": "rootItemsHeaderRow"
+                                                    }
+                                                }
+                                            ]
+                                        },
+                                        {
+                                            "tagName": "tbody",
+                                            "attributes": {
+                                                "id": "rootItemsBody"
+                                            }
+                                        }
+                                    ]
+                                }
+                            ]
+                        }
+                    ]
+                }
+            ]
+        },
+        {
+            "tagName": "script",
+            "attributes": {
+                "type": "module",
+                "src": "./js/index.js"
+            }
+        },
+        {
+            "tagName": "script",
+            "attributes": {
+                "type": "module"
+            },
+            "textContent": "import { domToSpec } from \"../src/domToSpec.js\";\n let lastSpec = null;\n\n document.getElementById(\"btnFetch\").addEventListener(\"click\", () => {\n const sourceEl = document.querySelector(\"#body\");\n lastSpec = domToSpec({ inElement: sourceEl });\n document.getElementById(\"tableView\").textContent = JSON.stringify(lastSpec, null, 2);\n });"
+        },
+        {
+            "tagName": "div",
+            "attributes": {
+                "style": "background-color: transparent; border: 0px; padding: 0px; margin: 0px; position: fixed;"
+            }
+        },
+        {
+            "tagName": "div",
+            "attributes": {
+                "id": "GOOGLE_INPUT_CHEXT_FLAG",
+                "input": "",
+                "input_stat": "{\"tlang\":true,\"tsbc\":true,\"pun\":true,\"mk\":true,\"ss\":true}",
+                "style": "display: none;"
+            }
+        }
+    ]
+}
