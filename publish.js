@@ -5,6 +5,12 @@ import AdmZip from 'adm-zip';
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const extensionsRoot = path.join(__dirname, 'extension');
+const docsExtensionDir = path.join(__dirname, 'docs', 'extension');
+
+// Ensure docs/extension output folder exists
+if (!fs.existsSync(docsExtensionDir)) {
+    fs.mkdirSync(docsExtensionDir, { recursive: true });
+}
 
 // 1. Detect latest version folder in extension/ (e.g. v1, v2)
 const versionFolders = fs.readdirSync(extensionsRoot, { withFileTypes: true })
@@ -43,12 +49,13 @@ if (fs.existsSync(path.join(targetDir, 'popup'))) {
     zip.addLocalFolder(path.join(targetDir, 'popup'), 'popup');
 }
 
-const zipName = `tag-to-json-extension-${targetVersionFolder}.zip`;
-const zipPath = path.join(targetDir, zipName);
+// 2. Direct zip output into docs/extension for public GitHub Pages serving
+const zipName = `tag-to-json-extension-v${version}.zip`;
+const zipPath = path.join(docsExtensionDir, zipName);
 
 if (fs.existsSync(zipPath)) {
     fs.unlinkSync(zipPath);
 }
 
 zip.writeZip(zipPath);
-console.log(`🎉 Success! Created package inside extension/${targetVersionFolder}/${zipName}`);
+console.log(`🎉 Success! Extension packaged directly into docs: docs/extension/${zipName}`);

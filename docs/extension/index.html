@@ -1,0 +1,176 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>tag-to-json Inspector — Browser Extension</title>
+  <meta name="description" content="Browser Extension for tag-to-json. Extract live DOM elements into clean json-to-tag specifications right from your toolbar.">
+
+  <!-- Fonts & Bootstrap -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Fira+Code:wght@400;500&display=swap" rel="stylesheet">
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+
+  <style>
+    :root {
+      --font-sans: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+      --font-mono: 'Fira Code', monospace;
+      --primary-gradient: linear-gradient(135deg, #0d6efd 0%, #6610f2 100%);
+    }
+
+    body {
+      font-family: var(--font-sans);
+      background-color: #f8fafc;
+      color: #1e293b;
+    }
+
+    .hero-banner {
+      background: var(--primary-gradient);
+      color: #ffffff;
+      padding: 3.5rem 1.5rem 3rem;
+      border-radius: 0 0 1.5rem 1.5rem;
+      box-shadow: 0 10px 30px rgba(13, 110, 253, 0.15);
+    }
+
+    .card-modern {
+      border: 1px solid #e2e8f0;
+      border-radius: 1rem;
+      background: #ffffff;
+      box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05), 0 2px 4px -2px rgba(0, 0, 0, 0.05);
+      overflow: hidden;
+    }
+
+    .card-modern-header {
+      background: #ffffff;
+      border-bottom: 1px solid #edf2f7;
+      padding: 1rem 1.25rem;
+    }
+
+    .step-card {
+      background: #ffffff;
+      border: 1px solid #e2e8f0;
+      border-radius: 0.75rem;
+      padding: 1.25rem;
+    }
+
+    pre code, pre {
+      font-family: var(--font-mono);
+      font-size: 0.85rem;
+    }
+
+    .badge-pill-custom {
+      font-weight: 500;
+      padding: 0.35rem 0.75rem;
+      border-radius: 2rem;
+      font-size: 0.75rem;
+      background: rgba(255, 255, 255, 0.2);
+      color: #ffffff;
+      backdrop-filter: blur(4px);
+    }
+  </style>
+</head>
+
+<body>
+  <!-- Navigation Header -->
+  <header class="hero-banner text-center mb-5">
+    <div class="container" style="max-width: 860px;">
+      <div class="d-inline-flex gap-2 align-items-center mb-3">
+        <span class="badge-pill-custom">Version 2.0.0</span>
+        <span class="badge-pill-custom">Manifest V3</span>
+        <span class="badge-pill-custom">Chrome & Firefox</span>
+      </div>
+      <h1 class="display-5 fw-bold mb-3">tag-to-json Inspector</h1>
+      <p class="lead text-white-50 mb-4">
+        Extract live HTML elements directly from your browser toolbar into clean, declarative <code>json-to-tag</code> specifications.
+      </p>
+      <div class="d-flex justify-content-center gap-2 flex-wrap">
+        <a href="../extension/tag-to-json-extension-v2.0.0.zip" class="btn btn-warning btn-lg px-4 fw-semibold shadow-sm">
+          <i class="bi bi-download me-1"></i> Download Extension (v2.0.0 ZIP)
+        </a>
+        <a href="../index.html" class="btn btn-light btn-lg px-4 fw-semibold shadow-sm">
+          <i class="bi bi-house me-1"></i> Home / API Docs
+        </a>
+      </div>
+    </div>
+  </header>
+
+  <main class="container my-4" style="max-width: 900px;">
+
+    <!-- Extension Story & Features -->
+    <section class="mb-5">
+      <div class="card-modern p-4">
+        <h4 class="fw-bold mb-3">Why Use the Extension?</h4>
+        <p class="text-muted mb-4">
+          Instead of opening developer tools and typing console commands, the <strong>tag-to-json Inspector</strong> extension lives right in your browser toolbar:
+        </p>
+        <div class="row g-3">
+          <div class="col-md-4">
+            <div class="step-card h-100">
+              <span class="badge bg-primary mb-2">1. Toolbar Popup</span>
+              <h6 class="fw-semibold mb-1">Click Extension Icon</h6>
+              <p class="small text-muted mb-0">Scans all elements with an ID on the current active tab automatically.</p>
+            </div>
+          </div>
+          <div class="col-md-4">
+            <div class="step-card h-100">
+              <span class="badge bg-info text-dark mb-2">2. ID Selector</span>
+              <h6 class="fw-semibold mb-1">Select & Filter</h6>
+              <p class="small text-muted mb-0">Filter and pick the exact table, header, or card component you want to capture.</p>
+            </div>
+          </div>
+          <div class="col-md-4">
+            <div class="step-card h-100">
+              <span class="badge bg-success mb-2">3. Instant Save</span>
+              <h6 class="fw-semibold mb-1">1-Click Download</h6>
+              <p class="small text-muted mb-0">Downloads the generated <code>&lt;id&gt;-spec.json</code> file ready for <code>json-to-tag</code>.</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Installation Instructions -->
+    <section class="mb-5">
+      <div class="card-modern p-4">
+        <h4 class="fw-bold mb-3">How to Install</h4>
+        <div class="row g-4">
+          <div class="col-md-6">
+            <div class="step-card h-100">
+              <h6 class="fw-bold"><i class="bi bi-browser-chrome text-primary me-1"></i> Google Chrome / Brave / Edge</h6>
+              <ol class="small text-muted ps-3 mb-0">
+                <li class="mb-2">Download and extract <strong>tag-to-json-extension-v2.0.0.zip</strong>.</li>
+                <li class="mb-2">Open Chrome and navigate to <code>chrome://extensions</code>.</li>
+                <li class="mb-2">Enable <strong>Developer mode</strong> (top-right toggle).</li>
+                <li class="mb-0">Click <strong>Load unpacked</strong> and select the extracted folder.</li>
+              </ol>
+            </div>
+          </div>
+          <div class="col-md-6">
+            <div class="step-card h-100">
+              <h6 class="fw-bold"><i class="bi bi-browser-firefox text-danger me-1"></i> Mozilla Firefox</h6>
+              <ol class="small text-muted ps-3 mb-0">
+                <li class="mb-2">Open Firefox and navigate to <code>about:debugging#/runtime/this-firefox</code>.</li>
+                <li class="mb-2">Click <strong>Load Temporary Add-on...</strong>.</li>
+                <li class="mb-0">Select the downloaded <strong>tag-to-json-extension-v2.0.0.zip</strong> file directly.</li>
+              </ol>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+  </main>
+
+  <!-- Footer -->
+  <footer class="bg-white border-top py-4 text-center text-muted small">
+    <div class="container">
+      <p class="mb-1"><strong>tag-to-json Inspector</strong> &bull; Released under the <a href="https://github.com/keshavsoft/tag-to-json/blob/main/LICENSE" target="_blank" rel="noopener" class="text-decoration-none">MIT License</a>.</p>
+      <p class="mb-0">Created by <a href="https://github.com/keshavsoft" target="_blank" rel="noopener" class="text-decoration-none fw-semibold">KeshavSoft</a>.</p>
+    </div>
+  </footer>
+</body>
+
+</html>
