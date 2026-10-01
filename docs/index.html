@@ -1,0 +1,424 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>tag-to-json — Live DOM to JSON Specification Extractor</title>
+  <meta name="description" content="Capture live HTML DOM elements and extract them into clean, declarative json-to-tag specifications.">
+
+  <!-- Fonts & Bootstrap -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Fira+Code:wght@400;500&display=swap" rel="stylesheet">
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+
+  <style>
+    :root {
+      --font-sans: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+      --font-mono: 'Fira Code', monospace;
+      --primary-gradient: linear-gradient(135deg, #0d6efd 0%, #6610f2 100%);
+    }
+
+    body {
+      font-family: var(--font-sans);
+      background-color: #f8fafc;
+      color: #1e293b;
+    }
+
+    .hero-banner {
+      background: var(--primary-gradient);
+      color: #ffffff;
+      padding: 3.5rem 1.5rem 3rem;
+      border-radius: 0 0 1.5rem 1.5rem;
+      box-shadow: 0 10px 30px rgba(13, 110, 253, 0.15);
+    }
+
+    .card-modern {
+      border: 1px solid #e2e8f0;
+      border-radius: 1rem;
+      background: #ffffff;
+      box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05), 0 2px 4px -2px rgba(0, 0, 0, 0.05);
+      overflow: hidden;
+    }
+
+    .card-modern-header {
+      background: #ffffff;
+      border-bottom: 1px solid #edf2f7;
+      padding: 1rem 1.25rem;
+    }
+
+    .pipeline-step {
+      background: #ffffff;
+      border: 1px dashed #cbd5e1;
+      border-radius: 0.75rem;
+      padding: 1rem;
+      text-align: center;
+      transition: all 0.2s ease;
+    }
+
+    .pipeline-step:hover {
+      border-color: #0d6efd;
+      transform: translateY(-2px);
+      box-shadow: 0 4px 12px rgba(13, 110, 253, 0.08);
+    }
+
+    pre code, pre {
+      font-family: var(--font-mono);
+      font-size: 0.85rem;
+    }
+
+    .badge-pill-custom {
+      font-weight: 500;
+      padding: 0.35rem 0.75rem;
+      border-radius: 2rem;
+      font-size: 0.75rem;
+      background: rgba(255, 255, 255, 0.2);
+      color: #ffffff;
+      backdrop-filter: blur(4px);
+    }
+
+    .demo-preview-box {
+      border: 1px solid #e2e8f0;
+      border-radius: 0.5rem;
+      background: #f8fafc;
+      padding: 1rem;
+      min-height: 180px;
+    }
+  </style>
+</head>
+
+<body>
+  <!-- Hero Header -->
+  <header class="hero-banner text-center mb-5">
+    <div class="container" style="max-width: 860px;">
+      <div class="d-inline-flex gap-2 align-items-center mb-3">
+        <span class="badge-pill-custom">v1.0.0 (v2 core)</span>
+        <span class="badge-pill-custom">~2.2 kB raw / 910 B gzip</span>
+        <span class="badge-pill-custom">Zero Dependencies</span>
+        <span class="badge-pill-custom">Firefox & Chrome Add-on</span>
+      </div>
+      <h1 class="display-5 fw-bold mb-3">tag-to-json</h1>
+      <p class="lead text-white-50 mb-4">
+        Native DOM element to declarative JSON specification extractor. The reverse companion to <code>@keshavsoft/json-to-tag</code>.
+      </p>
+      <div class="d-flex justify-content-center gap-2 flex-wrap">
+        <a href="#interactive-showcase" class="btn btn-light btn-lg px-4 fw-semibold shadow-sm">
+          <i class="bi bi-play-circle me-1"></i> Interactive Demo
+        </a>
+        <a href="https://github.com/keshavsoft/tag-to-json" target="_blank" rel="noopener" class="btn btn-outline-light btn-lg px-4 fw-semibold">
+          <i class="bi bi-github me-1"></i> GitHub Repo
+        </a>
+        <a href="https://keshavsoft.github.io/json-to-tag/jsonUpload/editor.html" target="_blank" rel="noopener" class="btn btn-outline-light btn-lg px-3 fw-semibold">
+          <i class="bi bi-box-arrow-up-right me-1"></i> Visual Renderer
+        </a>
+      </div>
+    </div>
+  </header>
+
+  <main class="container my-4" style="max-width: 1040px;">
+
+    <!-- Architecture & The Story -->
+    <section class="mb-5">
+      <div class="card-modern p-4">
+        <div class="d-flex align-items-center justify-content-between mb-2">
+          <h4 class="fw-bold mb-0">The Round-Trip Story</h4>
+          <span class="badge bg-primary-subtle text-primary border border-primary-subtle">Full Cycle</span>
+        </div>
+        <p class="text-muted mb-4">
+          Together, <strong>tag-to-json</strong> and <strong>json-to-tag</strong> create a complete lossless round-trip loop between native HTML browser elements and declarative JSON specifications:
+        </p>
+        <div class="row g-3">
+          <div class="col-md-3">
+            <div class="pipeline-step h-100">
+              <span class="badge bg-secondary mb-2">1. Live DOM</span>
+              <h6 class="fw-semibold mb-1">Live Element</h6>
+              <p class="small text-muted mb-0">Any rendered HTML node, table, header, or card component</p>
+            </div>
+          </div>
+          <div class="col-md-3">
+            <div class="pipeline-step h-100 border-primary">
+              <span class="badge bg-primary mb-2">2. tag-to-json</span>
+              <h6 class="fw-semibold mb-1">Extract Spec</h6>
+              <p class="small text-muted mb-0">Traverses tag, attributes, classes, and nested children</p>
+            </div>
+          </div>
+          <div class="col-md-3">
+            <div class="pipeline-step h-100">
+              <span class="badge bg-info text-dark mb-2">3. JSON Tree</span>
+              <h6 class="fw-semibold mb-1">Declarative Spec</h6>
+              <p class="small text-muted mb-0">Portable, serializable JSON specification tree</p>
+            </div>
+          </div>
+          <div class="col-md-3">
+            <div class="pipeline-step h-100">
+              <span class="badge bg-success mb-2">4. json-to-tag</span>
+              <h6 class="fw-semibold mb-1">Rebuild DOM</h6>
+              <p class="small text-muted mb-0"><code>buildSpecElement({ inSpec })</code> reconstructs identical DOM</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Interactive Live Showcase -->
+    <section id="interactive-showcase" class="mb-5">
+      <div class="d-flex justify-content-between align-items-center mb-3 flex-wrap gap-2">
+        <div>
+          <h3 class="fw-bold mb-0">Interactive Live Showcase</h3>
+          <p class="text-muted mb-0">Extract specs from live HTML elements using <code>docs/dist/min.js</code></p>
+        </div>
+        <div class="btn-group p-1 bg-white border rounded shadow-sm" role="tablist">
+          <button type="button" class="btn btn-sm btn-primary" id="btn-sample-card">Bootstrap Card</button>
+          <button type="button" class="btn btn-sm btn-outline-secondary" id="btn-sample-table">Stock Table</button>
+          <button type="button" class="btn btn-sm btn-outline-secondary" id="btn-sample-header">App Header</button>
+        </div>
+      </div>
+
+      <!-- Live Element Workspace -->
+      <div class="card-modern mb-4">
+        <div class="card-modern-header d-flex justify-content-between align-items-center">
+          <span class="fw-semibold small"><i class="bi bi-eye me-1"></i> Live Source Element on Screen</span>
+          <div class="d-flex gap-2">
+            <button class="btn btn-primary btn-sm" id="btn-extract-now">
+              <i class="bi bi-arrow-repeat me-1"></i> Extract to JSON Spec
+            </button>
+            <button class="btn btn-outline-success btn-sm" id="btn-copy-spec">
+              <i class="bi bi-clipboard me-1"></i> Copy Spec
+            </button>
+            <button class="btn btn-outline-primary btn-sm" id="btn-download-spec">
+              <i class="bi bi-download me-1"></i> Download JSON
+            </button>
+          </div>
+        </div>
+        <div class="p-3 bg-white">
+          <div id="live-element-container" class="demo-preview-box">
+            <!-- Sample content dynamically injected -->
+          </div>
+        </div>
+      </div>
+
+      <!-- Side-by-Side: Extracted JSON Tree & Recreated DOM -->
+      <div class="row g-4">
+        <div class="col-lg-6">
+          <div class="card-modern h-100">
+            <div class="card-modern-header d-flex justify-content-between align-items-center">
+              <span class="fw-semibold small"><i class="bi bi-code-slash me-1"></i> Extracted Spec (tag-to-json output)</span>
+              <span class="badge bg-light text-dark border">JSON Spec Tree</span>
+            </div>
+            <div class="p-3 bg-dark rounded-bottom">
+              <pre class="m-0 text-light" style="max-height: 380px; overflow-y: auto;"><code id="spec-json-output">// Click "Extract to JSON Spec" above</code></pre>
+            </div>
+          </div>
+        </div>
+
+        <div class="col-lg-6">
+          <div class="card-modern h-100">
+            <div class="card-modern-header d-flex justify-content-between align-items-center">
+              <span class="fw-semibold small"><i class="bi bi-check-circle me-1"></i> Re-Rendered via json-to-tag</span>
+              <span class="badge bg-success-subtle text-success border border-success-subtle">Round-Trip Rebuild</span>
+            </div>
+            <div class="p-3 bg-white rounded-bottom">
+              <div id="recreated-dom-container" class="demo-preview-box" style="max-height: 380px; overflow-y: auto;">
+                <div class="text-muted text-center py-5">Reconstructed DOM node will appear here...</div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Usage & DevTools Console Guide -->
+    <section class="mb-5">
+      <div class="card-modern p-4">
+        <h4 class="fw-bold mb-3">Quick Integration</h4>
+        <div class="row g-3">
+          <div class="col-md-6">
+            <h6 class="fw-semibold">1. Install from npm</h6>
+            <div class="bg-dark p-3 rounded text-light mb-3">
+              <pre class="m-0"><code class="text-info">npm install @keshavsoft/tag-to-json</code></pre>
+            </div>
+            <h6 class="fw-semibold">2. Import in JavaScript</h6>
+            <div class="bg-dark p-3 rounded text-light">
+              <pre class="m-0"><code class="text-light"><span class="text-warning">import</span> { tagToJson } <span class="text-warning">from</span> <span class="text-success">"@keshavsoft/tag-to-json"</span>;
+
+<span class="text-secondary">// Pass an element or element ID:</span>
+<span class="text-warning">const</span> spec = tagToJson({
+  inElement: document.getElementById(<span class="text-success">"myTable"</span>)
+});
+
+console.log(spec);</code></pre>
+            </div>
+          </div>
+          <div class="col-md-6">
+            <h6 class="fw-semibold">Browser DevTools Console / Extension</h6>
+            <div class="bg-dark p-3 rounded text-light h-100">
+              <pre class="m-0"><code class="text-light"><span class="text-secondary">// Load via script tag or WebExtension:</span>
+&lt;script type=<span class="text-success">"module"</span> src=<span class="text-success">"./dist/min.js"</span>&gt;&lt;/script&gt;
+
+<span class="text-secondary">// Run directly in DevTools Console:</span>
+tagToJson({ inElement: $0 })
+
+<span class="text-secondary">// Or extract by ID:</span>
+<span class="text-warning">const</span> spec = window.tagToJson(<span class="text-success">"stockItemsTable"</span>);
+
+<span class="text-secondary">// Copy straight to clipboard:</span>
+copy(JSON.stringify(spec, null, 2));</code></pre>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+  </main>
+
+  <!-- Footer -->
+  <footer class="bg-white border-top py-4 text-center text-muted small">
+    <div class="container">
+      <p class="mb-1"><strong>tag-to-json</strong> &bull; Released under the <a href="https://github.com/keshavsoft/tag-to-json/blob/main/LICENSE" target="_blank" rel="noopener" class="text-decoration-none">MIT License</a>.</p>
+      <p class="mb-0">Created by <a href="https://github.com/keshavsoft" target="_blank" rel="noopener" class="text-decoration-none fw-semibold">KeshavSoft</a>.</p>
+    </div>
+  </footer>
+
+  <!-- Script logic importing production docs/dist/min.js & json-to-tag -->
+  <script type="module">
+    import { tagToJson } from "./dist/min.js";
+    import { buildSpecElement } from "https://keshavsoft.github.io/json-to-tag/dist/v4/min.js";
+
+    const samples = {
+      card: `
+<div class="card shadow-sm" style="max-width: 450px; margin: auto;">
+  <div class="card-body">
+    <div class="d-flex align-items-center gap-2 mb-2">
+      <span class="badge bg-primary">Item Master</span>
+      <span class="badge bg-success">In Stock</span>
+    </div>
+    <h5 class="card-title fw-bold mb-1">Organic Basmati Rice</h5>
+    <p class="card-text text-muted small">Premium aged long grain rice packed in sealed pouches.</p>
+    <div class="d-flex justify-content-between align-items-center mt-3">
+      <span class="fs-5 fw-bold text-dark">$45.00 / bag</span>
+      <button class="btn btn-sm btn-outline-primary">View Batches</button>
+    </div>
+  </div>
+</div>`,
+      table: `
+<table class="table table-hover table-striped align-middle border mb-0">
+  <thead class="table-dark">
+    <tr>
+      <th>#</th>
+      <th>Item Name</th>
+      <th>Batch</th>
+      <th>Godown</th>
+      <th>Balance</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>1</td>
+      <td><strong>Sugar M-30</strong></td>
+      <td><span class="badge bg-secondary">B-2026-01</span></td>
+      <td>Warehouse A</td>
+      <td>150 Bags</td>
+    </tr>
+    <tr>
+      <td>2</td>
+      <td><strong>Wheat Flour</strong></td>
+      <td><span class="badge bg-secondary">B-2026-08</span></td>
+      <td>Main Godown</td>
+      <td>300 Bags</td>
+    </tr>
+  </tbody>
+</table>`,
+      header: `
+<header class="p-3 bg-dark text-white rounded">
+  <div class="d-flex flex-wrap align-items-center justify-content-between">
+    <div class="d-flex align-items-center gap-2">
+      <i class="bi bi-boxes fs-4 text-warning"></i>
+      <span class="fs-5 fw-bold">Tally Cloud</span>
+    </div>
+    <ul class="nav col-12 col-lg-auto me-lg-auto mb-2 justify-content-center mb-md-0 ms-3">
+      <li><a href="#" class="nav-link px-2 text-secondary">Dashboard</a></li>
+      <li><a href="#" class="nav-link px-2 text-white">Stock Items</a></li>
+      <li><a href="#" class="nav-link px-2 text-white">Reports</a></li>
+    </ul>
+    <div class="text-end">
+      <button type="button" class="btn btn-outline-light me-2 btn-sm">Login</button>
+      <button type="button" class="btn btn-primary btn-sm">Sign-up</button>
+    </div>
+  </div>
+</header>`
+    };
+
+    let currentSampleKey = "card";
+    let currentSpec = null;
+
+    const liveContainer = document.getElementById("live-element-container");
+    const jsonOutput = document.getElementById("spec-json-output");
+    const recreatedContainer = document.getElementById("recreated-dom-container");
+
+    function loadSample(key) {
+      currentSampleKey = key;
+      liveContainer.innerHTML = samples[key];
+
+      // Update Tab Styles
+      ["card", "table", "header"].forEach((k) => {
+        const btn = document.getElementById(`btn-sample-${k}`);
+        if (k === key) {
+          btn.className = "btn btn-sm btn-primary";
+        } else {
+          btn.className = "btn btn-sm btn-outline-secondary";
+        }
+      });
+
+      // Automatically extract for live preview
+      extract();
+    }
+
+    function extract() {
+      const targetElement = liveContainer.firstElementChild;
+      if (!targetElement) return;
+
+      currentSpec = tagToJson({ inElement: targetElement });
+      jsonOutput.textContent = JSON.stringify(currentSpec, null, 2);
+
+      // Round-Trip: Pass directly to json-to-tag buildSpecElement
+      try {
+        recreatedContainer.innerHTML = "";
+        const rebuiltNode = buildSpecElement({ inSpec: currentSpec });
+        if (rebuiltNode) {
+          recreatedContainer.appendChild(rebuiltNode);
+        }
+      } catch (err) {
+        console.error("json-to-tag render error:", err);
+      }
+    }
+
+    document.getElementById("btn-sample-card").addEventListener("click", () => loadSample("card"));
+    document.getElementById("btn-sample-table").addEventListener("click", () => loadSample("table"));
+    document.getElementById("btn-sample-header").addEventListener("click", () => loadSample("header"));
+    document.getElementById("btn-extract-now").addEventListener("click", extract);
+
+    document.getElementById("btn-copy-spec").addEventListener("click", () => {
+      if (!currentSpec) extract();
+      navigator.clipboard.writeText(JSON.stringify(currentSpec, null, 2));
+      alert("Specification JSON copied to clipboard!");
+    });
+
+    document.getElementById("btn-download-spec").addEventListener("click", () => {
+      if (!currentSpec) extract();
+      const blob = new Blob([JSON.stringify(currentSpec, null, 2)], { type: "application/json" });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement("a");
+      a.href = url;
+      a.download = `${currentSampleKey}-spec.json`;
+      a.click();
+      URL.revokeObjectURL(url);
+    });
+
+    // Initial Load
+    loadSample("card");
+  </script>
+</body>
+
+</html>

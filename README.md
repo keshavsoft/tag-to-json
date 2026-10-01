@@ -6,6 +6,9 @@ Zero-dependency native DOM element to declarative JSON specification extractor.
 
 [![npm version](https://img.shields.io/npm/v/@keshavsoft/tag-to-json.svg)](https://www.npmjs.com/package/@keshavsoft/tag-to-json)
 [![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](LICENSE)
+[![Live Demo](https://img.shields.io/badge/Live-Demo%20%26%20Showcase-success.svg)](https://keshavsoft.github.io/tag-to-json/)
+
+> 🎮 **[Interactive Showcase & Live Demo](https://keshavsoft.github.io/tag-to-json/)**: Test live element extraction, round-trip re-rendering with `json-to-tag`, and one-click JSON downloading directly in your browser.
 
 ---
 
