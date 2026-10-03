@@ -1,13 +1,13 @@
 {
   "name": "@keshavsoft/tag-to-json",
-  "version": "1.5.1",
+  "version": "1.5.2",
   "description": "Zero-dependency native DOM element to declarative JSON specification extractor. Perfect companion for json-to-tag.",
   "publishConfig": {
     "access": "public"
   },
   "type": "module",
   "main": "src/index.js",
-  "module": "./src/v2/index.js",
+  "module": "./src/index.js",
   "exports": {
     ".": {
       "import": "./src/index.js",
@@ -23,7 +23,8 @@
   "files": [
     "src",
     "docs/dist",
-    "README.md"
+    "README.md",
+    "LICENSE"
   ],
   "scripts": {
     "dev": "vite",
