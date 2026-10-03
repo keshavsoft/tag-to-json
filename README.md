@@ -51,10 +51,10 @@ When included via `<script type="module" src="...">`, it automatically mounts to
 
 ```javascript
 // Inspect any element on a live page and extract its spec:
-const spec = window.tagToJson({ inElement: $0 });
+const spec = window.ks.tagToJson.domToSpec({ inElement: $0 });
 
 // Or pass an ID directly:
-const tableSpec = window.tagToJson("stockItemsTable");
+const tableSpec = window.ks.tagToJson.domToSpec("stockItemsTable");
 ```
 
 ---

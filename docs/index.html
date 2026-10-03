@@ -111,7 +111,7 @@
   <header class="hero-banner text-center mb-5">
     <div class="container" style="max-width: 860px;">
       <div class="d-inline-flex gap-2 align-items-center mb-3 flex-wrap justify-content-center">
-        <span class="badge-pill-custom">v1.4.2 (v5 core)</span>
+        <span class="badge-pill-custom">v1.5.2 (v5 core)</span>
         <span class="badge-pill-custom">W3C DOM Level 4</span>
         <span class="badge-pill-custom">Zero Dependencies</span>
         <span class="badge-pill-custom">Firefox & Chrome Add-on v5.0</span>
@@ -420,10 +420,10 @@ console.log(spec);</code></pre>
 &lt;script type=<span class="text-success">"module"</span> src=<span class="text-success">"./dist/min.js"</span>&gt;&lt;/script&gt;
 
 <span class="text-secondary">// Run directly in DevTools Console:</span>
-tagToJson({ inElement: $0 })
+<span class="text-warning">const</span> spec = window.ks.tagToJson.domToSpec({ inElement: $0 });
 
-<span class="text-secondary">// Or extract by ID:</span>
-<span class="text-warning">const</span> spec = window.tagToJson(<span class="text-success">"stockItemsTable"</span>);
+<span class="text-secondary">// Or extract by ID string:</span>
+<span class="text-warning">const</span> spec = window.ks.tagToJson.domToSpec(<span class="text-success">"stockItemsTable"</span>);
 
 <span class="text-secondary">// Copy straight to clipboard:</span>
 copy(JSON.stringify(spec, null, 2));</code></pre>
@@ -435,8 +435,42 @@ copy(JSON.stringify(spec, null, 2));</code></pre>
 
   </main>
 
+  <!-- Companion Library Cross-Link -->
+  <section class="bg-white border-top border-bottom py-4 mt-2 mb-0">
+    <div class="container" style="max-width: 1040px;">
+      <div class="row align-items-center g-3">
+        <div class="col-md-8">
+          <div class="d-flex align-items-center gap-2 mb-1">
+            <span class="badge bg-success-subtle text-success border border-success-subtle px-2">Companion Library</span>
+            <span class="fw-bold text-dark">@keshavsoft/json-to-tag</span>
+          </div>
+          <p class="text-muted small mb-0">
+            <strong>tag-to-json</strong> extracts specs. <strong>json-to-tag</strong> renders them back to native DOM.
+            Together they form a complete lossless round-trip loop — pass the JSON output of
+            <code>tagToJson()</code> directly into <code>buildSpecElement({ inSpec })</code>.
+          </p>
+        </div>
+        <div class="col-md-4 d-flex gap-2 justify-content-md-end flex-wrap">
+          <a href="https://keshavsoft.github.io/json-to-tag/" target="_blank" rel="noopener"
+            class="btn btn-primary btn-sm px-3 fw-semibold">
+            <i class="bi bi-box-arrow-up-right me-1"></i> Live Docs
+          </a>
+          <a href="https://github.com/keshavsoft/json-to-tag" target="_blank" rel="noopener"
+            class="btn btn-outline-dark btn-sm px-3">
+            <i class="bi bi-github me-1"></i> GitHub
+          </a>
+          <a href="https://www.npmjs.com/package/@keshavsoft/json-to-tag" target="_blank" rel="noopener"
+            class="btn btn-outline-danger btn-sm px-3">
+            <i class="bi bi-box-seam me-1"></i> npm
+          </a>
+        </div>
+      </div>
+    </div>
+  </section>
+
   <!-- Footer -->
   <footer class="bg-white border-top py-4 text-center text-muted small">
+
     <div class="container">
       <p class="mb-1"><strong>tag-to-json</strong> &bull; Released under the <a
           href="https://github.com/keshavsoft/tag-to-json/blob/main/LICENSE" target="_blank" rel="noopener"
@@ -449,7 +483,9 @@ copy(JSON.stringify(spec, null, 2));</code></pre>
   <!-- Script logic importing production docs/dist/min.js & json-to-tag -->
   <script type="module">
     import { tagToJson } from "./dist/min.js";
-    import { buildSpecElement } from "https://keshavsoft.github.io/json-to-tag/dist/v4/min.js";
+    // Try v9 (latest), fall back to v4
+    const { buildSpecElement } = await import("https://keshavsoft.github.io/json-to-tag/dist/v9/min.js")
+      .catch(() => import("https://keshavsoft.github.io/json-to-tag/dist/v4/min.js"));
 
     const samples = {
       card: `
