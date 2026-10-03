@@ -1,6 +1,6 @@
 {
   "name": "@keshavsoft/tag-to-json",
-  "version": "1.4.1",
+  "version": "1.4.2",
   "description": "Zero-dependency native DOM element to declarative JSON specification extractor. Perfect companion for json-to-tag.",
   "publishConfig": {
     "access": "public"
