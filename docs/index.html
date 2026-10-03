@@ -17,6 +17,11 @@
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
 
+  <script type="module">
+    import mermaid from "https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.esm.min.mjs";
+    mermaid.initialize({ startOnLoad: true, theme: "neutral" });
+  </script>
+
   <style>
     :root {
       --font-sans: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
@@ -67,6 +72,14 @@
       box-shadow: 0 4px 12px rgba(13, 110, 253, 0.08);
     }
 
+    .mermaid-box {
+      background: #ffffff;
+      border: 1px solid #e2e8f0;
+      border-radius: 0.75rem;
+      padding: 1.5rem 1rem;
+      overflow-x: auto;
+    }
+
     pre code,
     pre {
       font-family: var(--font-mono);
@@ -97,11 +110,11 @@
   <!-- Hero Header -->
   <header class="hero-banner text-center mb-5">
     <div class="container" style="max-width: 860px;">
-      <div class="d-inline-flex gap-2 align-items-center mb-3">
-        <span class="badge-pill-custom">v1.0.0 (v2 core)</span>
-        <span class="badge-pill-custom">~2.2 kB raw / 910 B gzip</span>
+      <div class="d-inline-flex gap-2 align-items-center mb-3 flex-wrap justify-content-center">
+        <span class="badge-pill-custom">v1.4.2 (v5 core)</span>
+        <span class="badge-pill-custom">W3C DOM Level 4</span>
         <span class="badge-pill-custom">Zero Dependencies</span>
-        <span class="badge-pill-custom">Firefox & Chrome Add-on</span>
+        <span class="badge-pill-custom">Firefox & Chrome Add-on v5.0</span>
       </div>
       <h1 class="display-5 fw-bold mb-3">tag-to-json</h1>
       <p class="lead text-white-50 mb-4">
@@ -112,16 +125,15 @@
         <a href="#interactive-showcase" class="btn btn-light btn-lg px-4 fw-semibold shadow-sm">
           <i class="bi bi-play-circle me-1"></i> Interactive Demo
         </a>
+        <a href="#architecture-pipeline" class="btn btn-outline-light btn-lg px-4 fw-semibold">
+          <i class="bi bi-diagram-3 me-1"></i> Architecture Flowchart
+        </a>
         <a href="./extension/index.html" class="btn btn-outline-light btn-lg px-4 fw-semibold">
           <i class="bi bi-puzzle me-1"></i> Extension
         </a>
         <a href="https://github.com/keshavsoft/tag-to-json" target="_blank" rel="noopener"
           class="btn btn-outline-light btn-lg px-4 fw-semibold">
           <i class="bi bi-github me-1"></i> GitHub Repo
-        </a>
-        <a href="https://keshavsoft.github.io/json-to-tag/jsonUpload/editor.html" target="_blank" rel="noopener"
-          class="btn btn-outline-light btn-lg px-3 fw-semibold">
-          <i class="bi bi-box-arrow-up-right me-1"></i> Visual Renderer
         </a>
       </div>
     </div>
@@ -170,6 +182,143 @@
             </div>
           </div>
         </div>
+      </div>
+    </section>
+
+    <!-- W3C DOM Extraction Architecture & Flowchart -->
+    <section id="architecture-pipeline" class="mb-5">
+      <div class="card-modern p-4">
+        <div class="d-flex align-items-center justify-content-between mb-3 flex-wrap gap-2">
+          <div>
+            <h4 class="fw-bold mb-1"><i class="bi bi-diagram-3 text-primary me-2"></i>W3C DOM Extraction Architecture (v5)</h4>
+            <p class="text-muted small mb-0">Official W3C/WHATWG DOM Level 4 standard tree traversal and 5-chapter pipeline.</p>
+          </div>
+          <span class="badge bg-success-subtle text-success border border-success-subtle px-3 py-2 fs-6">
+            W3C Standard Compliant
+          </span>
+        </div>
+
+        <p class="text-secondary mb-4">
+          Rather than treating DOM serialization as flat, unstructured recursion, <strong>tag-to-json v5</strong> models
+          the process as a cohesive 5-chapter narrative grounded in browser engine standards (Blink, Gecko, WebKit):
+        </p>
+
+        <!-- Live Mermaid Flowchart -->
+        <div class="mermaid-box mb-4">
+          <pre class="mermaid text-center mb-0">
+flowchart TD
+    Start(["Live DOM Node / Element ID"]) --> Ch1["Chapter 1: Target Resolution & Type Guard<br/><i>Resolve ID string &amp; verify Node.ELEMENT_NODE</i>"]
+    
+    Ch1 --> Ch2["Chapter 2: Clean Gatekeeping<br/><i>Filter &lt;script&gt;, &lt;style&gt;, extension artifacts</i>"]
+    
+    Ch2 --> Ch3["Chapter 3: Attribute Serialization<br/><i>Extract class, href, id, data-*, SVG attributes</i>"]
+    
+    Ch3 --> Ch4{"Chapter 4: The Fork in the Road<br/><i>Does element have child element tags?</i>"}
+    
+    Ch4 -- "No: Pure Leaf Tag" --> Leaf["Leaf Extraction<br/><i>Extract clean textContent</i>"]
+    
+    Ch4 -- "Yes: Mixed Content / Container" --> Ch5["Chapter 5: The W3C Tree Walker<br/><i>Iterate element.childNodes in exact document order</i>"]
+    
+    Ch5 --> N1["Node.ELEMENT_NODE (1)<br/><i>Recursive domToSpec() call</i>"]
+    Ch5 --> N2["Node.TEXT_NODE (3)<br/><i>Trimmed text string in place</i>"]
+    Ch5 --> N3["Node.COMMENT_NODE (8)<br/><i>Gracefully skipped</i>"]
+    
+    N1 --> Mixed["Assemble 'children' Array<br/><i>Preserves SVG icons + sibling text labels</i>"]
+    N2 --> Mixed
+    
+    Leaf --> Spec(["Declarative JSON Specification Tree"])
+    Mixed --> Spec
+    
+    Spec ==> Rebuild(["json-to-tag: buildSpecElement()"])
+    Rebuild ==> DomOut(["Faithfully Reconstructed Live DOM Node"])
+
+    classDef chapter fill:#f0f7ff,stroke:#0d6efd,stroke-width:2px,color:#0b3c7b;
+    classDef success fill:#e8f9ee,stroke:#198754,stroke-width:2px,color:#0a522a;
+    classDef nodeTypes fill:#fff8e6,stroke:#ffc107,stroke-width:1px,color:#664d03;
+    class Ch1,Ch2,Ch3,Ch4,Ch5 chapter;
+    class Spec,Rebuild,DomOut success;
+    class N1,N2,N3 nodeTypes;
+          </pre>
+        </div>
+
+        <!-- 5 Chapters Grid -->
+        <h5 class="fw-bold mb-3">The 5 Pipeline Chapters</h5>
+        <div class="row g-3 mb-4">
+          <div class="col-md-4">
+            <div class="pipeline-step h-100 text-start p-3">
+              <span class="badge bg-primary mb-2">Chapter 1</span>
+              <h6 class="fw-semibold">Target Resolution & Type Guard</h6>
+              <p class="small text-muted mb-0">Accepts either an HTMLElement node or a string ID (auto-resolves via <code>document.getElementById</code>) and verifies <code>nodeType === Node.ELEMENT_NODE</code>.</p>
+            </div>
+          </div>
+          <div class="col-md-4">
+            <div class="pipeline-step h-100 text-start p-3">
+              <span class="badge bg-primary mb-2">Chapter 2</span>
+              <h6 class="fw-semibold">Clean Gatekeeping</h6>
+              <p class="small text-muted mb-0">Filters out non-visual tags (<code>&lt;script&gt;</code>, <code>&lt;style&gt;</code>, <code>&lt;noscript&gt;</code>) and browser extension noise (e.g. Google Input Tools markers).</p>
+            </div>
+          </div>
+          <div class="col-md-4">
+            <div class="pipeline-step h-100 text-start p-3">
+              <span class="badge bg-primary mb-2">Chapter 3</span>
+              <h6 class="fw-semibold">Attribute Serialization</h6>
+              <p class="small text-muted mb-0">Maps DOM attribute collections into clean JSON objects, properly capturing classes, inline styles, IDs, and SVG namespaces (<code>xlink:href</code>).</p>
+            </div>
+          </div>
+          <div class="col-md-6">
+            <div class="pipeline-step h-100 text-start p-3">
+              <span class="badge bg-warning text-dark mb-2">Chapter 4</span>
+              <h6 class="fw-semibold">The Fork in the Road (Leaf vs Container)</h6>
+              <p class="small text-muted mb-0">If an element contains zero child tags (e.g. <code>&lt;h1&gt;Dashboard&lt;/h1&gt;</code>), it extracts clean <code>textContent</code> without spawning child arrays.</p>
+            </div>
+          </div>
+          <div class="col-md-6">
+            <div class="pipeline-step h-100 text-start p-3 border-primary">
+              <span class="badge bg-success mb-2">Chapter 5</span>
+              <h6 class="fw-semibold">The W3C Tree Walker (Mixed Content)</h6>
+              <p class="small text-muted mb-0">Traverses <code>element.childNodes</code> in exact document sequence using native W3C <code>nodeType</code> checks. Sibling text nodes and icons are both preserved!</p>
+            </div>
+          </div>
+        </div>
+
+        <!-- Mixed Content Case Study -->
+        <div class="card bg-light border-0 p-3 rounded-3">
+          <h6 class="fw-bold mb-2"><i class="bi bi-lightbulb-fill text-warning me-1"></i> Why <code>childNodes</code> & W3C <code>nodeType</code> Solves Mixed Content</h6>
+          <p class="small text-muted mb-3">
+            In modern UI frameworks like Bootstrap 5, navigation links mix SVG icon tags and text labels:
+            <code>&lt;a class="nav-link"&gt;&lt;svg&gt;...&lt;/svg&gt; Orders&lt;/a&gt;</code>.
+            Standard <code>element.children</code> only recognizes element tags and drops <code>"Orders"</code> entirely!
+            By traversing <code>element.childNodes</code> with W3C constants, both are captured in exact order:
+          </p>
+          <div class="row g-2">
+            <div class="col-md-6">
+              <div class="bg-white p-2 border rounded">
+                <span class="badge bg-danger-subtle text-danger mb-1">Old Parser (element.children)</span>
+                <pre class="m-0 text-muted" style="font-size: 0.78rem;"><code>// Text "Orders" was dropped!
+{
+  "tagName": "a",
+  "children": [
+    { "tagName": "svg" }
+  ]
+}</code></pre>
+              </div>
+            </div>
+            <div class="col-md-6">
+              <div class="bg-white p-2 border rounded border-success">
+                <span class="badge bg-success-subtle text-success mb-1">v5 W3C Engine (element.childNodes)</span>
+                <pre class="m-0 text-dark" style="font-size: 0.78rem;"><code>// 100% Lossless Round-Trip!
+{
+  "tagName": "a",
+  "children": [
+    { "tagName": "svg" },
+    "Orders"
+  ]
+}</code></pre>
+              </div>
+            </div>
+          </div>
+        </div>
+
       </div>
     </section>
 

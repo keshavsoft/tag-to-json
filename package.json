@@ -17,6 +17,7 @@
     "./v2": "./src/v2/index.js",
     "./v3": "./src/v3/index.js",
     "./v4": "./src/v4/index.js",
+    "./v5": "./src/v5/index.js",
     "./package.json": "./package.json"
   },
   "files": [
