@@ -77,13 +77,27 @@
     }
 
     .badge-pill-custom {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.35rem;
       font-weight: 500;
-      padding: 0.35rem 0.75rem;
+      padding: 0.35rem 0.8rem;
       border-radius: 2rem;
       font-size: 0.75rem;
       background: rgba(255, 255, 255, 0.2);
       color: #ffffff;
       backdrop-filter: blur(4px);
+      text-decoration: none;
+      border: 1px solid rgba(255, 255, 255, 0.25);
+      transition: all 0.2s ease;
+    }
+
+    a.badge-pill-custom:hover {
+      background: rgba(255, 255, 255, 0.35);
+      color: #ffffff;
+      transform: translateY(-1px);
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+      border-color: rgba(255, 255, 255, 0.6);
     }
   </style>
 </head>
@@ -93,10 +107,17 @@
   <header class="hero-banner text-center mb-5">
     <div class="container" style="max-width: 880px;">
       <div class="d-inline-flex gap-2 align-items-center mb-3 flex-wrap justify-content-center">
-        <span class="badge-pill-custom">Version 5.0.0 (Release)</span>
-        <span class="badge-pill-custom">W3C DOM Level 4 Core</span>
-        <span class="badge-pill-custom">Manifest V3</span>
-        <span class="badge-pill-custom">Chrome & Firefox</span>
+        <a href="../../index.html" class="badge-pill-custom" title="Back to tag-to-json Home">
+          <i class="bi bi-house me-1"></i>tag-to-json Home
+        </a>
+        <a href="../../w3c-dom-level-4.html" class="badge-pill-custom" title="Learn about W3C DOM Level 4 Core">
+          <i class="bi bi-diagram-3 me-1"></i>W3C DOM Level 4 Core
+        </a>
+        <a href="../../zero-dependencies.html" class="badge-pill-custom" title="Zero Dependencies Architecture">
+          <i class="bi bi-shield-check me-1"></i>Zero Dependencies
+        </a>
+        <span class="badge-pill-custom"><i class="bi bi-shield-lock me-1"></i>Manifest V3</span>
+        <span class="badge-pill-custom"><i class="bi bi-browser-chrome me-1"></i>Chrome & Firefox</span>
       </div>
       <h1 class="display-5 fw-bold mb-3">tag-to-json Inspector v5.0.0</h1>
       <p class="lead text-white-50 mb-4">

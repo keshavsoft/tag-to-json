@@ -1,0 +1,640 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>W3C DOM Level 4 Standard & tag-to-json — Native DOM Traversal Architecture</title>
+  <meta name="description"
+    content="Learn how tag-to-json leverages native W3C/WHATWG DOM Level 4 standards for robust, lossless DOM-to-JSON tree extraction without external dependencies.">
+
+  <!-- Fonts & Bootstrap -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link
+    href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Fira+Code:wght@400;500&display=swap"
+    rel="stylesheet">
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+
+  <script type="module">
+    import mermaid from "https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.esm.min.mjs";
+    mermaid.initialize({ startOnLoad: true, theme: "neutral" });
+  </script>
+
+  <style>
+    :root {
+      --font-sans: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+      --font-mono: 'Fira Code', monospace;
+      --primary-gradient: linear-gradient(135deg, #0d6efd 0%, #6610f2 100%);
+    }
+
+    body {
+      font-family: var(--font-sans);
+      background-color: #f8fafc;
+      color: #1e293b;
+    }
+
+    .hero-banner {
+      background: var(--primary-gradient);
+      color: #ffffff;
+      padding: 3.5rem 1.5rem 3rem;
+      border-radius: 0 0 1.5rem 1.5rem;
+      box-shadow: 0 10px 30px rgba(13, 110, 253, 0.15);
+    }
+
+    .card-modern {
+      border: 1px solid #e2e8f0;
+      border-radius: 1rem;
+      background: #ffffff;
+      box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05), 0 2px 4px -2px rgba(0, 0, 0, 0.05);
+      overflow: hidden;
+    }
+
+    .card-modern-header {
+      background: #ffffff;
+      border-bottom: 1px solid #edf2f7;
+      padding: 1rem 1.25rem;
+    }
+
+    .feature-card {
+      background: #ffffff;
+      border: 1px solid #e2e8f0;
+      border-radius: 0.85rem;
+      padding: 1.5rem;
+      height: 100%;
+      transition: all 0.2s ease;
+    }
+
+    .feature-card:hover {
+      border-color: #0d6efd;
+      transform: translateY(-2px);
+      box-shadow: 0 6px 16px rgba(13, 110, 253, 0.08);
+    }
+
+    .badge-pill-custom {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.35rem;
+      font-weight: 500;
+      padding: 0.35rem 0.85rem;
+      border-radius: 2rem;
+      font-size: 0.78rem;
+      background: rgba(255, 255, 255, 0.2);
+      color: #ffffff;
+      backdrop-filter: blur(4px);
+      text-decoration: none;
+      border: 1px solid rgba(255, 255, 255, 0.25);
+      transition: all 0.2s ease;
+    }
+
+    a.badge-pill-custom:hover {
+      background: rgba(255, 255, 255, 0.35);
+      color: #ffffff;
+      transform: translateY(-1px);
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+      border-color: rgba(255, 255, 255, 0.6);
+    }
+
+    .badge-pill-active {
+      background: #ffffff;
+      color: #0d6efd;
+      font-weight: 600;
+      border-color: #ffffff;
+    }
+
+    pre code,
+    pre {
+      font-family: var(--font-mono);
+      font-size: 0.85rem;
+    }
+
+    .mermaid-box {
+      background: #ffffff;
+      border: 1px solid #e2e8f0;
+      border-radius: 0.75rem;
+      padding: 1.5rem 1rem;
+      overflow-x: auto;
+    }
+
+    .node-type-pill {
+      font-family: var(--font-mono);
+      font-size: 0.8rem;
+      padding: 0.25rem 0.6rem;
+      border-radius: 0.35rem;
+    }
+
+    .code-editor-box {
+      border: 1px solid #e2e8f0;
+      border-radius: 0.5rem;
+      background: #1e293b;
+      color: #f8fafc;
+      padding: 1rem;
+      font-family: var(--font-mono);
+      font-size: 0.85rem;
+      min-height: 180px;
+      resize: vertical;
+      width: 100%;
+    }
+
+    .demo-preview-box {
+      border: 1px solid #e2e8f0;
+      border-radius: 0.5rem;
+      background: #f8fafc;
+      padding: 1.25rem;
+      min-height: 180px;
+    }
+
+    .tree-node-item {
+      padding: 0.4rem 0.75rem;
+      border-radius: 0.35rem;
+      margin-bottom: 0.35rem;
+      background: #f1f5f9;
+      font-family: var(--font-mono);
+      font-size: 0.82rem;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+  </style>
+</head>
+
+<body>
+  <!-- Hero Banner -->
+  <header class="hero-banner text-center mb-5">
+    <div class="container" style="max-width: 900px;">
+      <!-- Navigation Pills -->
+      <nav class="d-inline-flex gap-2 align-items-center mb-3 flex-wrap justify-content-center" aria-label="Page Navigation">
+        <a href="./index.html" class="badge-pill-custom" title="tag-to-json Main Documentation">
+          <i class="bi bi-house me-1"></i>tag-to-json Home
+        </a>
+        <span class="badge-pill-custom badge-pill-active" aria-current="page">
+          <i class="bi bi-diagram-3 me-1"></i>W3C DOM Level 4
+        </span>
+        <a href="./zero-dependencies.html" class="badge-pill-custom" title="Zero Dependencies Architecture">
+          <i class="bi bi-shield-check me-1"></i>Zero Dependencies
+        </a>
+        <a href="./extension/index.html" class="badge-pill-custom" title="Firefox & Chrome Add-on v5.0 Inspector">
+          <i class="bi bi-browser-chrome me-1"></i>Firefox & Chrome Add-on v5.0
+        </a>
+      </nav>
+
+      <h1 class="display-5 fw-bold mb-3">W3C DOM Level 4 Standard</h1>
+      <p class="lead text-white-50 mb-4" style="max-width: 760px; margin: auto;">
+        Why <code>tag-to-json</code> is strictly grounded in official W3C / WHATWG DOM Level 4 standards — ensuring 100% lossless node traversal, native browser speed, and complete independence from virtual DOM abstractions.
+      </p>
+
+      <div class="d-flex justify-content-center gap-2 flex-wrap">
+        <a href="./index.html" class="btn btn-light btn-lg px-4 fw-semibold shadow-sm">
+          <i class="bi bi-arrow-left me-1"></i> Back to Main Docs
+        </a>
+        <a href="#interactive-sandbox" class="btn btn-warning btn-lg px-4 fw-semibold shadow-sm text-dark">
+          <i class="bi bi-play-circle me-1"></i> Live Node Inspector
+        </a>
+        <a href="./extension/index.html" class="btn btn-outline-light btn-lg px-4 fw-semibold">
+          <i class="bi bi-puzzle me-1"></i> Browser Extension
+        </a>
+        <a href="https://dom.spec.whatwg.org/#dom-node-nodetype" target="_blank" rel="noopener"
+          class="btn btn-outline-light btn-lg px-4 fw-semibold">
+          <i class="bi bi-box-arrow-up-right me-1"></i> WHATWG DOM Spec
+        </a>
+      </div>
+    </div>
+  </header>
+
+  <main class="container my-4" style="max-width: 1040px;">
+
+    <!-- What is W3C DOM Level 4? -->
+    <section class="mb-5">
+      <div class="card-modern p-4">
+        <div class="d-flex align-items-center justify-content-between mb-3 flex-wrap gap-2">
+          <div>
+            <span class="badge bg-primary-subtle text-primary border border-primary-subtle mb-2">Core Foundation</span>
+            <h3 class="fw-bold mb-0">What is W3C DOM Level 4?</h3>
+          </div>
+          <span class="badge bg-success-subtle text-success border border-success-subtle px-3 py-2">
+            <i class="bi bi-check-circle-fill me-1"></i>Official Web Standard
+          </span>
+        </div>
+
+        <p class="text-secondary lead fs-6">
+          The <strong>W3C DOM Level 4</strong> (now continuously published as the <strong>WHATWG DOM Living Standard</strong>) is the modern official specification that standardizes how web browsers model HTML and XML documents in memory as an object-oriented node tree.
+        </p>
+        <p class="text-secondary mb-4">
+          Historically, DOM Level 1 (1998) introduced basic document access, Level 2 (2000) added namespaces and event models, and Level 3 (2004) expanded serialization. <strong>DOM Level 4</strong> unified all browser implementations into a single, standardized core that eliminates browser incompatibilities, replaces legacy vendor quirks, and establishes the modern <code>Node</code>, <code>Element</code>, <code>TreeWalker</code>, and <code>MutationObserver</code> interfaces found in every modern browser engine today (Chromium Blink, Firefox Gecko, Apple WebKit).
+        </p>
+
+        <!-- 4 Pillars Cards -->
+        <div class="row g-3">
+          <div class="col-md-6">
+            <div class="feature-card">
+              <div class="d-flex align-items-center gap-2 mb-2">
+                <i class="bi bi-hash fs-4 text-primary"></i>
+                <h5 class="fw-bold mb-0">Standardized Node.nodeType</h5>
+              </div>
+              <p class="text-muted small mb-0">
+                Official numeric enum constants defined in <a href="https://dom.spec.whatwg.org/#dom-node-nodetype" target="_blank" rel="noopener">WHATWG DOM §4.4</a>. <code>tag-to-json</code> uses strict constants (<code>Node.ELEMENT_NODE === 1</code>, <code>Node.TEXT_NODE === 3</code>, <code>Node.COMMENT_NODE === 8</code>) rather than unreliable string checking.
+              </p>
+            </div>
+          </div>
+
+          <div class="col-md-6">
+            <div class="feature-card">
+              <div class="d-flex align-items-center gap-2 mb-2">
+                <i class="bi bi-diagram-2 fs-4 text-primary"></i>
+                <h5 class="fw-bold mb-0">True Document-Order childNodes</h5>
+              </div>
+              <p class="text-muted small mb-0">
+                Guarantees exact document order traversal. By using <code>childNodes</code> instead of <code>children</code>, <code>tag-to-json</code> preserves mixed content (e.g. inline SVG icons alongside sibling text labels) without dropping whitespace or inline copy.
+              </p>
+            </div>
+          </div>
+
+          <div class="col-md-6">
+            <div class="feature-card">
+              <div class="d-flex align-items-center gap-2 mb-2">
+                <i class="bi bi-tags fs-4 text-primary"></i>
+                <h5 class="fw-bold mb-0">Unified NamedNodeMap Attributes</h5>
+              </div>
+              <p class="text-muted small mb-0">
+                Iterates native <code>element.attributes</code> directly from the browser's C++ representation. Standardizes HTML attributes, custom <code>data-*</code> attributes, ARIA accessibility semantics, and SVG namespaces (<code>viewBox</code>, <code>xmlns</code>).
+              </p>
+            </div>
+          </div>
+
+          <div class="col-md-6">
+            <div class="feature-card">
+              <div class="d-flex align-items-center gap-2 mb-2">
+                <i class="bi bi-cpu fs-4 text-primary"></i>
+                <h5 class="fw-bold mb-0">C++ Native Browser Speed</h5>
+              </div>
+              <p class="text-muted small mb-0">
+                Zero JavaScript virtual DOM parsing overhead. <code>tag-to-json</code> executes directly against the browser engine's high-speed C++ DOM tree, achieving microsecond extraction times with 0 dependencies.
+              </p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Why DOM Level 4: childNodes vs children -->
+    <section class="mb-5">
+      <div class="card-modern p-4">
+        <h3 class="fw-bold mb-2">
+          <i class="bi bi-exclamation-triangle-fill text-warning me-2"></i>The Crucial Difference: <code>childNodes</code> vs <code>children</code>
+        </h3>
+        <p class="text-secondary mb-4">
+          Most naive DOM-to-JSON tools fail on real-world websites because they loop over <code>element.children</code> instead of <code>element.childNodes</code>. Here is why the W3C DOM Level 4 specification makes all the difference:
+        </p>
+
+        <div class="row g-4 align-items-stretch">
+          <div class="col-md-6">
+            <div class="p-3 border rounded-3 bg-light h-100">
+              <span class="badge bg-danger mb-2">Naive Parsers (Broken)</span>
+              <h6 class="fw-bold">Using <code>element.children</code></h6>
+              <p class="small text-muted mb-2">
+                <code>element.children</code> only returns element tags (<code>nodeType === 1</code>). Any text nodes placed directly next to child tags are completely deleted!
+              </p>
+              <div class="bg-white p-2 rounded border font-monospace small mb-3">
+                &lt;button class="btn"&gt;<br>
+                &nbsp;&nbsp;&lt;i class="bi-star"&gt;&lt;/i&gt;<br>
+                &nbsp;&nbsp;<span class="text-danger fw-bold">Favorite</span> <span class="text-muted">&lt;-- LOST SILENTLY!</span><br>
+                &lt;/button&gt;
+              </div>
+              <p class="small text-danger mb-0">
+                <i class="bi bi-x-circle me-1"></i> Result: The text "Favorite" vanishes from the extracted JSON!
+              </p>
+            </div>
+          </div>
+
+          <div class="col-md-6">
+            <div class="p-3 border rounded-3 bg-light h-100 border-success">
+              <span class="badge bg-success mb-2">tag-to-json (W3C DOM Level 4)</span>
+              <h6 class="fw-bold">Using <code>element.childNodes</code></h6>
+              <p class="small text-muted mb-2">
+                Traverses every child node in document order, honoring official W3C <code>nodeType</code> specifications:
+              </p>
+              <div class="bg-white p-2 rounded border font-monospace small mb-3">
+                [<br>
+                &nbsp;&nbsp;{ tag: "i", attributes: { class: "bi-star" } },<br>
+                &nbsp;&nbsp;<span class="text-success fw-bold">"Favorite"</span> <span class="text-muted">&lt;-- Perfectly Preserved!</span><br>
+                ]
+              </div>
+              <p class="small text-success mb-0">
+                <i class="bi bi-check-circle me-1"></i> Result: 100% lossless mixed-content extraction.
+              </p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Node.nodeType Table -->
+    <section class="mb-5">
+      <div class="card-modern p-4">
+        <div class="d-flex align-items-center justify-content-between mb-3 flex-wrap gap-2">
+          <div>
+            <h4 class="fw-bold mb-1">W3C DOM Level 4 Node Type Specification Table</h4>
+            <p class="text-muted small mb-0">Official W3C constant mapping implemented in <code>tag-to-json</code> pipeline</p>
+          </div>
+          <a href="https://developer.mozilla.org/en-US/docs/Web/API/Node/nodeType" target="_blank" rel="noopener" class="btn btn-sm btn-outline-primary">
+            <i class="bi bi-box-arrow-up-right me-1"></i> MDN Reference
+          </a>
+        </div>
+
+        <div class="table-responsive">
+          <table class="table table-hover table-striped align-middle border mb-0">
+            <thead class="table-dark">
+              <tr>
+                <th style="width: 140px;">W3C Constant</th>
+                <th style="width: 80px;">Value</th>
+                <th>Standard Definition</th>
+                <th>tag-to-json v5 Handling</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td><code>Node.ELEMENT_NODE</code></td>
+                <td><span class="badge bg-primary">1</span></td>
+                <td>An <code>Element</code> node such as <code>&lt;div&gt;</code>, <code>&lt;span&gt;</code>, <code>&lt;table&gt;</code>, or <code>&lt;svg&gt;</code>.</td>
+                <td><strong>Extracted recursively</strong> into a clean declarative JSON spec object with <code>tag</code>, <code>attributes</code>, and <code>children</code>.</td>
+              </tr>
+              <tr>
+                <td><code>Node.ATTRIBUTE_NODE</code></td>
+                <td><span class="badge bg-secondary">2</span></td>
+                <td>An <code>Attr</code> node representing an element attribute.</td>
+                <td><strong>Serialized</strong> via Chapter 3 into key-value attribute dictionaries with extension noise filtering.</td>
+              </tr>
+              <tr>
+                <td><code>Node.TEXT_NODE</code></td>
+                <td><span class="badge bg-info text-dark">3</span></td>
+                <td>The actual textual data inside an element or attribute.</td>
+                <td><strong>Preserved in place</strong>: Leaf text is extracted to <code>textContent</code>; mixed sibling text is placed directly in the <code>children</code> array.</td>
+              </tr>
+              <tr>
+                <td><code>Node.COMMENT_NODE</code></td>
+                <td><span class="badge bg-warning text-dark">8</span></td>
+                <td>A <code>Comment</code> node (<code>&lt;!-- comment --&gt;</code>).</td>
+                <td><strong>Gracefully skipped</strong> by Chapter 5 to keep the JSON output clean and production-ready.</td>
+              </tr>
+              <tr>
+                <td><code>Node.DOCUMENT_NODE</code></td>
+                <td><span class="badge bg-secondary">9</span></td>
+                <td>A <code>Document</code> node (the top root node of the DOM tree).</td>
+                <td><strong>Resolved</strong> to <code>document.documentElement</code> or <code>document.body</code> for full-page extraction.</td>
+              </tr>
+              <tr>
+                <td><code>Node.DOCUMENT_FRAGMENT_NODE</code></td>
+                <td><span class="badge bg-secondary">11</span></td>
+                <td>A <code>DocumentFragment</code> node (lightweight DOM container).</td>
+                <td><strong>Supported</strong>: Extracts fragments and template elements (<code>&lt;template&gt;</code>) losslessly.</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </section>
+
+    <!-- 5 Chapters Mermaid Diagram -->
+    <section class="mb-5">
+      <div class="card-modern p-4">
+        <h4 class="fw-bold mb-2">The 5-Chapter W3C Serialization Pipeline</h4>
+        <p class="text-secondary mb-4">
+          Rather than arbitrary string concatenation, <code>tag-to-json</code> translates W3C DOM Level 4 nodes through a predictable 5-chapter lifecycle:
+        </p>
+
+        <div class="mermaid-box mb-4">
+          <pre class="mermaid text-center mb-0">
+flowchart TD
+    Start(["Live DOM Node / Element ID"]) --> Ch1["Chapter 1: Target Resolution & Type Guard<br/><i>Resolve ID string &amp; verify Node.ELEMENT_NODE</i>"]
+    
+    Ch1 --> Ch2["Chapter 2: Clean Gatekeeping<br/><i>Filter &lt;script&gt;, &lt;style&gt;, extension artifacts</i>"]
+    
+    Ch2 --> Ch3["Chapter 3: Attribute Serialization<br/><i>Extract class, href, id, data-*, SVG attributes</i>"]
+    
+    Ch3 --> Ch4{"Chapter 4: The Fork in the Road<br/><i>Does element have child element tags?</i>"}
+    
+    Ch4 -- "No: Pure Leaf Tag" --> Leaf["Leaf Extraction<br/><i>Extract clean textContent</i>"]
+    
+    Ch4 -- "Yes: Mixed Content / Container" --> Ch5["Chapter 5: The W3C Tree Walker<br/><i>Iterate element.childNodes in exact document order</i>"]
+    
+    Ch5 --> N1["Node.ELEMENT_NODE (1)<br/><i>Recursive domToSpec() call</i>"]
+    Ch5 --> N2["Node.TEXT_NODE (3)<br/><i>Trimmed text string in place</i>"]
+    Ch5 --> N3["Node.COMMENT_NODE (8)<br/><i>Gracefully skipped</i>"]
+    
+    N1 --> Mixed["Assemble 'children' Array<br/><i>Preserves SVG icons + sibling text labels</i>"]
+    N2 --> Mixed
+    
+    Leaf --> Spec(["Declarative JSON Specification Tree"])
+    Mixed --> Spec
+    
+    Spec ==> Rebuild(["json-to-tag: buildSpecElement()"])
+    Rebuild ==> DomOut(["Faithfully Reconstructed Live DOM Node"])
+
+    classDef chapter fill:#f0f7ff,stroke:#0d6efd,stroke-width:2px,color:#0b3c7b;
+    classDef success fill:#e8f9ee,stroke:#198754,stroke-width:2px,color:#0a522a;
+    classDef nodeTypes fill:#fff8e6,stroke:#ffc107,stroke-width:1px,color:#664d03;
+    class Ch1,Ch2,Ch3,Ch4,Ch5 chapter;
+    class Spec,Rebuild,DomOut success;
+    class N1,N2,N3 nodeTypes;
+          </pre>
+        </div>
+      </div>
+    </section>
+
+    <!-- Interactive W3C DOM Sandbox -->
+    <section id="interactive-sandbox" class="mb-5">
+      <div class="card-modern p-4">
+        <div class="d-flex align-items-center justify-content-between mb-3 flex-wrap gap-2">
+          <div>
+            <h4 class="fw-bold mb-1"><i class="bi bi-play-circle text-primary me-2"></i>Live W3C DOM Level 4 Node Inspector</h4>
+            <p class="text-muted small mb-0">Test any HTML snippet and inspect how W3C nodeTypes are traversed and serialized live</p>
+          </div>
+          <div class="btn-group btn-group-sm">
+            <button class="btn btn-outline-secondary" id="btn-sample-button">Mixed Button</button>
+            <button class="btn btn-outline-secondary" id="btn-sample-alert">Alert Badge</button>
+            <button class="btn btn-outline-secondary" id="btn-sample-card">Product Card</button>
+          </div>
+        </div>
+
+        <div class="row g-3 mb-3">
+          <div class="col-lg-6">
+            <label class="form-label fw-semibold small text-muted">Editable Live HTML Snippet:</label>
+            <textarea id="live-html-input" class="code-editor-box" rows="7" spellcheck="false"></textarea>
+          </div>
+          <div class="col-lg-6">
+            <label class="form-label fw-semibold small text-muted">Rendered Live Browser DOM Element:</label>
+            <div id="live-dom-preview" class="demo-preview-box d-flex align-items-center justify-content-center">
+              <!-- Live preview rendered here -->
+            </div>
+          </div>
+        </div>
+
+        <div class="d-flex justify-content-between align-items-center mb-3 flex-wrap gap-2">
+          <button id="btn-run-inspection" class="btn btn-primary fw-semibold px-4">
+            <i class="bi bi-lightning-charge-fill me-1"></i> Inspect & Extract W3C DOM
+          </button>
+          <div class="d-flex gap-2">
+            <button id="btn-copy-json" class="btn btn-outline-secondary btn-sm">
+              <i class="bi bi-clipboard me-1"></i> Copy Spec JSON
+            </button>
+          </div>
+        </div>
+
+        <!-- Node Breakdown and JSON Spec -->
+        <div class="row g-3">
+          <div class="col-lg-5">
+            <div class="card border rounded-3 p-3 bg-light h-100">
+              <h6 class="fw-bold mb-2"><i class="bi bi-diagram-3 text-primary me-2"></i>W3C DOM Nodes Detected:</h6>
+              <div id="node-tree-output" style="max-height: 280px; overflow-y: auto;">
+                <!-- Node breakdown items injected here -->
+              </div>
+            </div>
+          </div>
+          <div class="col-lg-7">
+            <div class="card border rounded-3 p-3 bg-dark text-white h-100">
+              <div class="d-flex justify-content-between align-items-center mb-2">
+                <span class="badge bg-secondary">Output JSON Specification</span>
+                <span class="small text-white-50">Generated by tag-to-json v5</span>
+              </div>
+              <pre class="mb-0 text-white" style="max-height: 280px; overflow-y: auto;"><code id="spec-json-output" class="text-info font-monospace">// Extracted JSON will appear here...</code></pre>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Cross Navigation Banner -->
+    <section class="card-modern p-4 text-center bg-white mb-5">
+      <h4 class="fw-bold mb-2">Explore Next</h4>
+      <p class="text-muted mb-4" style="max-width: 600px; margin: auto;">
+        Learn why having zero external dependencies pairs with W3C DOM Level 4 to build an ultra-secure, featherweight browser tool.
+      </p>
+      <div class="d-flex justify-content-center gap-3 flex-wrap">
+        <a href="./zero-dependencies.html" class="btn btn-outline-primary px-4 fw-semibold">
+          <i class="bi bi-shield-check me-1"></i> Zero Dependencies Guide
+        </a>
+        <a href="./extension/index.html" class="btn btn-primary px-4 fw-semibold shadow-sm">
+          <i class="bi bi-browser-chrome me-1"></i> Firefox & Chrome Add-on v5.0
+        </a>
+        <a href="./index.html" class="btn btn-outline-secondary px-4 fw-semibold">
+          <i class="bi bi-house me-1"></i> Main Documentation
+        </a>
+      </div>
+    </section>
+
+  </main>
+
+  <!-- Footer -->
+  <footer class="bg-white border-top py-4 text-center text-muted small">
+    <div class="container">
+      <p class="mb-1"><strong>tag-to-json</strong> &bull; Built on W3C / WHATWG DOM Level 4 Standards &bull; Released under <a
+          href="https://github.com/keshavsoft/tag-to-json/blob/main/LICENSE" target="_blank" rel="noopener"
+          class="text-decoration-none">MIT License</a>.</p>
+      <p class="mb-0">Created by <a href="https://github.com/keshavsoft" target="_blank" rel="noopener"
+          class="text-decoration-none fw-semibold">KeshavSoft</a>.</p>
+    </div>
+  </footer>
+
+  <!-- Live Sandbox Logic using tag-to-json -->
+  <script type="module">
+    import { tagToJson } from "./dist/min.js";
+
+    const samples = {
+      button: `<button class="btn btn-primary d-inline-flex align-items-center gap-2 px-3 py-2">
+  <i class="bi bi-star-fill text-warning"></i>
+  <span>Favorite Item</span>
+  <span class="badge bg-light text-dark ms-1">4.9</span>
+</button>`,
+      alert: `<div class="alert alert-success d-flex align-items-center gap-2 mb-0" role="alert">
+  <i class="bi bi-check-circle-fill fs-5"></i>
+  <div>
+    <strong>Order Confirmed!</strong> Your invoice #KS-9842 has been generated.
+  </div>
+</div>`,
+      card: `<div class="card shadow-sm" style="max-width: 320px; width: 100%;">
+  <div class="card-body">
+    <span class="badge bg-success-subtle text-success mb-2">In Stock</span>
+    <h5 class="card-title fw-bold mb-1">Organic Honey</h5>
+    <p class="card-text text-muted small">100% pure wild honey packed in 500g glass jar.</p>
+    <a href="#" class="btn btn-sm btn-primary w-100">Add to Cart</a>
+  </div>
+</div>`
+    };
+
+    const htmlInput = document.getElementById("live-html-input");
+    const domPreview = document.getElementById("live-dom-preview");
+    const nodeTreeOutput = document.getElementById("node-tree-output");
+    const specOutput = document.getElementById("spec-json-output");
+
+    let latestSpec = null;
+
+    function loadSample(key) {
+      if (samples[key]) {
+        htmlInput.value = samples[key].trim();
+        inspectDOM();
+      }
+    }
+
+    function inspectDOM() {
+      domPreview.innerHTML = htmlInput.value;
+      const targetElement = domPreview.firstElementChild;
+      if (!targetElement) {
+        nodeTreeOutput.innerHTML = '<p class="text-danger small">No valid element found.</p>';
+        specOutput.textContent = "// No element";
+        return;
+      }
+
+      // Analyze W3C DOM child nodes
+      nodeTreeOutput.innerHTML = "";
+      
+      const rootDiv = document.createElement("div");
+      rootDiv.className = "tree-node-item bg-primary-subtle text-primary border border-primary-subtle";
+      rootDiv.innerHTML = `<span class="badge bg-primary">Node.ELEMENT_NODE (1)</span> <strong>&lt;${targetElement.tagName.toLowerCase()}&gt;</strong> (${targetElement.attributes.length} attrs, ${targetElement.childNodes.length} childNodes)`;
+      nodeTreeOutput.appendChild(rootDiv);
+
+      Array.from(targetElement.childNodes).forEach((child, index) => {
+        const item = document.createElement("div");
+        item.className = "tree-node-item ms-3";
+
+        if (child.nodeType === Node.ELEMENT_NODE) {
+          item.innerHTML = `<span class="badge bg-primary">Type 1 (Element)</span> <code>&lt;${child.tagName.toLowerCase()}&gt;</code>: ${child.textContent.trim().substring(0, 30)}`;
+        } else if (child.nodeType === Node.TEXT_NODE) {
+          const text = child.textContent.trim();
+          if (text) {
+            item.innerHTML = `<span class="badge bg-info text-dark">Type 3 (Text)</span> <span class="text-dark">"${text}"</span>`;
+          } else {
+            item.innerHTML = `<span class="badge bg-light text-muted">Type 3 (Whitespace)</span> <span class="text-muted small">&lt;blank line/space&gt;</span>`;
+          }
+        } else if (child.nodeType === Node.COMMENT_NODE) {
+          item.innerHTML = `<span class="badge bg-warning text-dark">Type 8 (Comment)</span> <code>&lt;!-- ${child.nodeValue} --&gt;</code>`;
+        }
+        nodeTreeOutput.appendChild(item);
+      });
+
+      // Extract via tagToJson
+      try {
+        latestSpec = tagToJson({ inElement: targetElement });
+        specOutput.textContent = JSON.stringify(latestSpec, null, 2);
+      } catch (err) {
+        specOutput.textContent = "// Error: " + err.message;
+      }
+    }
+
+    document.getElementById("btn-sample-button").addEventListener("click", () => loadSample("button"));
+    document.getElementById("btn-sample-alert").addEventListener("click", () => loadSample("alert"));
+    document.getElementById("btn-sample-card").addEventListener("click", () => loadSample("card"));
+    document.getElementById("btn-run-inspection").addEventListener("click", inspectDOM);
+
+    document.getElementById("btn-copy-json").addEventListener("click", () => {
+      if (!latestSpec) inspectDOM();
+      navigator.clipboard.writeText(JSON.stringify(latestSpec, null, 2));
+      alert("Specification JSON copied to clipboard!");
+    });
+
+    // Initial load
+    loadSample("button");
+  </script>
+</body>
+
+</html>
